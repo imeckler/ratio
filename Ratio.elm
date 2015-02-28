@@ -7,6 +7,8 @@ module Ratio
   , Ratio
   ) where
 
+{-| A simple module providing a ratio type for rational numbers #-}
+
 type Ratio a = Ratio a a
 type alias Rational = Ratio Int
 
