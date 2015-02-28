@@ -9,6 +9,7 @@ module Ratio
   , denominator
   , numerator
   , split
+  , toFloat
   ) where
 
 {-| A simple module providing a ratio type for rational numbers 
@@ -23,12 +24,15 @@ module Ratio
 @docs add, multiply, divide, negate
 
 # Elimination
-@docs numerator, denominator, split
+@docs numerator, denominator, split, toFloat
 
 # Util
 @docs gcd 
 
 -}
+
+import Basics
+import Basics(..)
 
 type Ratio a = Ratio a a
 type alias Rational = Ratio Int
@@ -64,4 +68,7 @@ denominator (Ratio _ b) = b
 
 split : Ratio a -> (a, a)
 split (Ratio a b) = (a, b)
+
+toFloat : Rational -> Float
+toFloat (Ratio a b) = Basics.toFloat a / Basics.toFloat b
 
