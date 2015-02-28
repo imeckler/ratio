@@ -5,9 +5,29 @@ module Ratio
   , divide
   , negate
   , Ratio
+  , over
+  , denominator
+  , numerator
+  , split
   ) where
 
-{-| A simple module providing a ratio type for rational numbers #-}
+{-| A simple module providing a ratio type for rational numbers 
+
+# Type
+@docs Ratio
+
+# Introduction
+@docs over
+
+# Operations
+@docs add, multiply, divide, negate
+
+# Elimination
+@docs numerator, denominator, split
+
+# Util
+@docs gcd 
+-}
 
 type Ratio a = Ratio a a
 type alias Rational = Ratio Int
