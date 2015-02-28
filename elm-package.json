@@ -1,12 +1,14 @@
 {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "summary": "A ratio type for working with rational numbers",
     "repository": "https://github.com/imeckler/ratio.git",
     "license": "BSD3",
     "source-directories": [
         "."
     ],
-    "exposed-modules": ["Ratio"],
+    "exposed-modules": [
+        "Ratio"
+    ],
     "dependencies": {
         "elm-lang/core": "1.1.1 <= v < 2.0.0"
     }

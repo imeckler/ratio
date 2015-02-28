@@ -5,6 +5,7 @@ module Ratio
   , divide
   , negate
   , Ratio
+  , Rational
   , over
   , denominator
   , numerator
@@ -14,8 +15,8 @@ module Ratio
 
 {-| A simple module providing a ratio type for rational numbers 
 
-# Type
-@docs Ratio
+# Types
+@docs Ratio, Rational
 
 # Introduction
 @docs over
