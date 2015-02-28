@@ -27,6 +27,7 @@ module Ratio
 
 # Util
 @docs gcd 
+
 -}
 
 type Ratio a = Ratio a a
