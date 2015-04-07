@@ -11,6 +11,7 @@ module Ratio
   , numerator
   , split
   , toFloat
+  , fromInt
   ) where
 
 {-| A simple module providing a ratio type for rational numbers 
@@ -60,6 +61,9 @@ negate = multiply (Ratio -1 1)
 
 over : Int -> Int -> Rational
 over x y = normalize (Ratio x y)
+
+fromInt : Int -> Rational
+fromInt x = x `over` 1
 
 numerator : Ratio a -> a
 numerator (Ratio a _) = a
