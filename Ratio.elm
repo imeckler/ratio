@@ -33,8 +33,7 @@ module Ratio
 
 -}
 
-import Basics
-import Basics(..)
+import Basics exposing (..)
 
 type Ratio a = Ratio a a
 type alias Rational = Ratio Int
