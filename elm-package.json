@@ -1,5 +1,5 @@
 {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "summary": "A ratio type for working with rational numbers",
     "repository": "https://github.com/imeckler/ratio.git",
     "license": "BSD3",
