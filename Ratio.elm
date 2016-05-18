@@ -1,17 +1,18 @@
 module Ratio
-  ( gcd
-  , add
-  , multiply
-  , divide
-  , negate
-  , Rational
-  , over
-  , denominator
-  , numerator
-  , split
-  , toFloat
-  , fromInt
-  ) where
+    exposing
+        ( gcd
+        , add
+        , multiply
+        , divide
+        , negate
+        , Rational
+        , over
+        , denominator
+        , numerator
+        , split
+        , toFloat
+        , fromInt
+        )
 
 {-| A simple module providing a ratio type for rational numbers 
 
