@@ -5,7 +5,7 @@ module Ratio
         , multiply
         , divide
         , negate
-        , Rational (..)
+        , Rational
         , over
         , denominator
         , numerator
@@ -20,6 +20,7 @@ module Ratio
         , le
         , max
         , min
+        , isZero
         )
 
 {-| A simple module providing a ratio type for rational numbers 
@@ -31,7 +32,7 @@ module Ratio
 @docs over, fromInt
 
 # Operations
-@docs add, multiply, divide, negate, eq, ne, gt, lt, ge, le, max, min
+@docs add, multiply, divide, negate, eq, ne, gt, lt, ge, le, max, min, isZero
 
 # Elimination
 @docs numerator, denominator, split, toFloat
@@ -49,6 +50,13 @@ import Basics exposing (..)
     by the operations of gluing bars together and shrinking a
     given bar so that an integer number of copies of it glues together to
     make another given bar.
+
+    yeah but.....
+    you can add them and multiply them - I really only need to use this for small integers
+    not to mention division by zero
+
+    I now think it's better to hide the constructor to enable degenerate forms such as
+    (1,-3) and (-1, -3) to br normalised.
 -}
 type Rational = Rational Int Int
 
@@ -57,7 +65,10 @@ gcd : Int -> Int -> Int
 gcd a b = if b == 0 then a else gcd b (a % b)
 
 normalize (Rational p q) =
-  let k = gcd p q * (if q < 0 then -1 else 1) in Rational (p // k) (q // k)
+  let
+    k = gcd p q * (if q < 0 then -1 else 1) 
+  in 
+    Rational (p // k) (q // k)
 
 {-| Addition. It's like gluing together two bars of the given lengths. -}
 add : Rational -> Rational -> Rational
@@ -82,7 +93,13 @@ negate (Rational a b) = Rational (-a) b
 
 {-| `over x y` is like `x / y`. -}
 over : Int -> Int -> Rational
-over x y = normalize (Rational x y)
+over x y = 
+  if 
+    (y < 0) 
+  then
+    normalize (Rational -x -y)
+  else
+    normalize (Rational x y)
 
 
 {-| `fromInt x = over x 1` -}
@@ -146,9 +163,15 @@ max a b =
 
 {-|-}
 min : Rational -> Rational -> Rational
-min =
-  flip max
+min a b =
+  if lt a b then
+    a
+  else
+    b
 
+isZero : Rational -> Bool
+isZero r =
+  0 == (numerator r)
 
   
 rel : (Int -> Int -> Bool) -> Rational -> Rational -> Bool
