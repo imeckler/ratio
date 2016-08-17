@@ -27,6 +27,7 @@ all =
       [  
         basics
       , comparisons
+      , infixComparisons
       --, arithmetic
       ]
 
@@ -60,13 +61,13 @@ basics =
            Expect.equal (denominator (over 1 0)) 0,
       test "eq" <|
          \() ->
-           Expect.equal (over 1 2) (over 1 2),
+           Expect.equal (Ratio.eq (over 1 2) (over 1 2)) True,
       test "eq vulgar" <|
          \() ->
-           Expect.equal (over 2 1) (fromInt 2),
+           Expect.equal (Ratio.eq (over 2 1) (fromInt 2)) True,
       test "ne" <|
          \() ->
-           Expect.notEqual (over 1 2) (over 1 3),
+           Expect.equal (Ratio.ne (over 1 2) (over 1 3)) True,
       test "is zero" <|
          \() ->
            Expect.equal (isZero (over 0 1)) True,
@@ -79,7 +80,7 @@ basics =
       test "infinity under mult by infinity" <|
          \() ->
            Expect.equal (multiply (over 5 1) (over 1 0)) (over 1 0),    
-      test "productin of infinity" <|
+      test "production of infinity" <|
          \() ->
            let
              bigInt = 2 ^ 31
@@ -90,6 +91,19 @@ basics =
            Expect.equal (Basics.isInfinite (Ratio.toFloat(over 1 0))) True 
  
         ]
+
+infixComparisons : Test
+infixComparisons =
+  describe "Infix Comparison Tests"
+    [     
+      test "is |==|" <|
+         \() ->
+           Expect.equal ((over 1 2) |==| (over 1 2)) True,
+      test "not |==|" <|
+         \() ->
+           Expect.equal ((over 1 2) |==| (over 1 3)) False
+    ]
+    
 
 comparisons : Test
 comparisons =
@@ -125,6 +139,8 @@ comparisons =
         ]
 
 
+
+
 {- these tests all fail, but they really pass because I need an approximate equality tester:
 
       Expect.almostEqual -> Float -> FLoat -> Expectation
@@ -133,14 +149,14 @@ arithmetic : Test
 arithmetic =
   describe "Arithmetic Checks"
     [        
-     fuzz (fuzzRationalIntPair) "*|" <|
-        \(r,i) ->
-           r *| i
-             |> Ratio.toFloat
-             |> Expect.equal ((Ratio.toFloat r) * (Basics.toFloat i)), 
      fuzz (fuzzRationalIntPair) "|*" <|
         \(r,i) ->
-          i |* r 
+           r |* i
+             |> Ratio.toFloat
+             |> Expect.equal ((Ratio.toFloat r) * (Basics.toFloat i)), 
+     fuzz (fuzzRationalIntPair) "*|" <|
+        \(r,i) ->
+          i *| r 
              |> Ratio.toFloat
              |> Expect.equal ((Ratio.toFloat r) * (Basics.toFloat i)),
      fuzz (fuzzRationalPair) "|*|" <|
@@ -150,7 +166,7 @@ arithmetic =
              |> Expect.equal ((Ratio.toFloat a) * (Ratio.toFloat b)),
      fuzz (fuzzRationalIntPair) "transitivity of *" <|
         \(r,i) ->
-           r *| i *| i
+           r |* i |* i
              |> Ratio.toFloat
              |> Expect.equal ((Ratio.toFloat r) * (Basics.toFloat i) * (Basics.toFloat i))
     ]
