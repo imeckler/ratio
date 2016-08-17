@@ -21,9 +21,7 @@ module Ratio
         , max
         , min
         , isZero
-        , (|*)
-        , (*|)
-        , (|*|)
+        , isInfinite
         )
 
 {-| A simple module providing a ratio type for rational numbers 
@@ -35,10 +33,9 @@ module Ratio
 @docs over, fromInt
 
 # Operations
-@docs add, multiply, divide, negate, eq, ne, gt, lt, ge, le, max, min, isZero
+@docs add, multiply, divide, negate, eq, ne, gt, lt, ge, le, max, min, isZero, isInfinite
 
-# Infix
-@docs (|*), (*|), (|*|)
+
 
 # Elimination
 @docs numerator, denominator, split, toFloat
@@ -180,30 +177,17 @@ isZero : Rational -> Bool
 isZero r =
   0 == (numerator r)
 
+{-|-}
+isInfinite : Rational -> Bool
+isInfinite r =
+  0 == (denominator r)
+
   
 rel : (Int -> Int -> Bool) -> Rational -> Rational -> Bool
 rel relop a b =
   relop ((numerator a) * (denominator b)) ((numerator b) * (denominator a)) 
 
-{- experimental -}
-infixl 7 |*
-infixl 7 *|
-infixl 7 |*|
 
-{-| multiply an int by a rational -}
-(|*) : Int -> Rational -> Rational
-(|*) i r = 
-  multiply (fromInt i) r
-
-{-| multiply a rational by an int -}
-(*|) : Rational -> Int -> Rational
-(*|) =
-  flip (|*)
-
-{-| multiply 2 rationals-}
-(|*|) : Rational -> Rational -> Rational
-(|*|) =
-  multiply
 
 
 

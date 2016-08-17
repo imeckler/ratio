@@ -5,6 +5,7 @@ import Fuzz exposing (Fuzzer, intRange, tuple, map)
 import Expect
 import String
 import Ratio exposing (..)
+import Ratio.Infix exposing (..)
 
 fuzzRational : Fuzzer Rational
 fuzzRational = 
@@ -26,7 +27,7 @@ all =
       [  
         basics
       , comparisons
-      , arithmetic
+      --, arithmetic
       ]
 
 basics : Test
@@ -71,7 +72,22 @@ basics =
            Expect.equal (isZero (over 0 1)) True,
       test "is not zero" <|
          \() ->
-           Expect.equal (isZero (over 1 1)) False     
+           Expect.equal (isZero (over 1 1)) False,   
+      test "infinity" <|
+         \() ->
+           Expect.equal (Basics.isInfinite (Ratio.toFloat(over 1 0))) True,   
+      test "infinity under mult by infinity" <|
+         \() ->
+           Expect.equal (multiply (over 5 1) (over 1 0)) (over 1 0),    
+      test "productin of infinity" <|
+         \() ->
+           let
+             bigInt = 2 ^ 31
+           in
+             Expect.equal (multiply (over bigInt 1) (over bigInt 0)) (over 1 0),     
+      test "infinity" <|
+         \() ->
+           Expect.equal (Basics.isInfinite (Ratio.toFloat(over 1 0))) True 
  
         ]
 
