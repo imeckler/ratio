@@ -10,9 +10,17 @@ This is forked from imeckler/Ratio in order to achieve the following:
     
     Rational (-1) (-3) becomes Rational 1 3
     
-2.  Further combinators - __eq, ne, gt, ge, lt, le, max, min__ etc.
+2.  Further combinators for comparing two Rationals - __eq, ne, gt, ge, lt, le, max, min__ etc.
 
-3.  Beginnings of experimental arithmetic infix combinators
+3.  Optional infix forms for the comparison operators - __|==|_, _|/=|__ etc.
+
+4.  Infix operators for mixed type arithmetic incorporating both Rationals and Ints.  Where both operands are Rationals, we surround the operator with the _'|'_ symbol.  Where one operand is a Rational and the other an Int, we place the _'|'_ symbol at the side of the operator adjacent to the Rational.  For example (where r is a Rational and i an Int):
+
+    r1 |+| r2
+    
+    i +| r
+    
+    r |+ i
 
 
 Behaviour of Infinity is interesting:
@@ -29,5 +37,5 @@ gives a Rational 0 1 as expected.  Also (of course), if you test _toFloat (over 
 
     multiply (over max.int 1) (over max.int 1)
     
-gives a Rational 1 0.  So, in summary, Rational 1 0 seems to consistently represent infinity. 
+gives a Rational 1 0.  So, in summary, Rational 1 0 seems consistently to represent infinity. 
 

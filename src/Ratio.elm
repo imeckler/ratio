@@ -2,9 +2,14 @@ module Ratio
     exposing
         ( gcd
         , add
+        , subtract
         , multiply
+        , multiplyByInt
         , divide
+        , divideByInt
+        , divideIntBy
         , negate
+        , invert
         , Rational
         , over
         , denominator
@@ -33,7 +38,7 @@ module Ratio
 @docs over, fromInt
 
 # Operations
-@docs add, multiply, divide, negate, eq, ne, gt, lt, ge, le, max, min, isZero, isInfinite
+@docs add, subtract, multiply, multiplyByInt, divide, divideByInt, divideIntBy, negate, invert, eq, ne, gt, lt, ge, le, max, min, isZero, isInfinite
 
 
 
@@ -73,10 +78,30 @@ normalize (Rational p q) =
   in 
     Rational (p // k) (q // k)
 
+{- Add or subtract two rationals :-
+     f can be (+) or (-)
+-}
+addsub : (Int -> Int -> Int) -> Rational -> Rational -> Rational
+addsub f (Rational a b) (Rational c d) =
+  normalize (Rational (f (a * d) (b * c)) (b * d))
+
 {-| Addition. It's like gluing together two bars of the given lengths. -}
 add : Rational -> Rational -> Rational
+{-
 add (Rational a b) (Rational c d) =
   normalize (Rational (a * d + b * c) (b * d))
+-}
+add =
+  addsub (+)
+
+{-| subtraction. Is it like ungluing together two bars of the given lengths? -}
+subtract : Rational -> Rational -> Rational
+{-
+subtract (Rational a b) (Rational c d) =
+  normalize (Rational (a * d - b * c) (b * d))
+-}
+subtract =
+  addsub (-)
 
 {-| Mulitplication. `mulitply x (c / d)` is the length of the bar that you'd get
     if you glued `c` copies of a bar of length `x` end-to-end and then shrunk it
@@ -86,13 +111,38 @@ multiply : Rational -> Rational -> Rational
 multiply (Rational a b) (Rational c d) =
   normalize (Rational (a * c) (b * d))
 
+{-| Multiply a Rational by an Int -}
+multiplyByInt : Rational -> Int -> Rational
+multiplyByInt (Rational a b)  i =
+  normalize (Rational (a * i) b)
+
 {-| Division. It's sort of like multiplication! -}
 divide : Rational -> Rational -> Rational
 divide r (Rational c d) = multiply r (Rational d c)
 
+{-| Divide a Rational by an Int -}
+divideByInt : Rational -> Int -> Rational
+divideByInt r i =
+  normalize (divide r (fromInt i))
+
+{-| Divide an Int by a Rational -}
+divideIntBy : Int -> Rational -> Rational
+divideIntBy i r =
+  normalize (divide (fromInt i) r)
+
+{- This implementation gives the wrong precedence
+divideByInt r i =
+  normalize (multiplyByInt (invert r) i)
+-}
+
 {-| This doesn't really fit with the bar metaphor but this is multiplication by `-1`. -}
 negate : Rational -> Rational
 negate (Rational a b) = Rational (-a) b
+
+{-| invert the rational (r -> 1/r) -}
+invert : Rational -> Rational
+invert (Rational a b) = 
+  normalize (Rational b a)
 
 {-| `over x y` is like `x / y`. -}
 over : Int -> Int -> Rational

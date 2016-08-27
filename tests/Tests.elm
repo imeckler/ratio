@@ -1,6 +1,7 @@
 module Tests exposing (..)
 
 import Test exposing (..)
+import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, intRange, tuple, map)
 import Expect
 import String
@@ -21,6 +22,42 @@ fuzzRationalIntPair : Fuzzer (Rational, Int)
 fuzzRationalIntPair =
   Fuzz.tuple (fuzzRational, intRange -100 100)
 
+fuzzRationalIntTrio : Fuzzer (Rational, Int, Int)
+fuzzRationalIntTrio =
+  Fuzz.tuple3 (fuzzRational, intRange -100 100, intRange -100 100)
+
+{-| naive and rather arbitrary implementation of the requested Float expectation function almostEqual 
+
+    (see https://github.com/elm-community/elm-test/issues/41)
+-}
+expectAlmostEqual : Float -> Float -> Expectation
+expectAlmostEqual signedTarget signedTestable =
+  let
+    target = abs signedTarget
+    testable = abs signedTestable
+    delta = 
+      if (testable > 1000000) then
+        0.1
+      else if (testable > 1) then
+        0.0001
+      else
+        0.00000001
+    lowerBound =  target - delta
+    upperBound =  target + delta
+    bothInfinite = Basics.isInfinite target && Basics.isInfinite testable
+    firstTest = Expect.greaterThan lowerBound testable
+  in
+    if bothInfinite then
+      Expect.pass
+    else
+      case 
+        (Expect.getFailure firstTest) of
+           Just _ ->  
+             firstTest
+           Nothing ->
+             Expect.lessThan upperBound testable
+             
+
 all : Test
 all =
     concat
@@ -28,7 +65,7 @@ all =
         basics
       , comparisons
       , infixComparisons
-      --, arithmetic
+      , arithmetic
       ]
 
 basics : Test
@@ -37,58 +74,101 @@ basics =
     [     
       test "numerator +n" <|
          \() ->
-           Expect.equal (numerator (over 1 4)) 1,   
+           Expect.equal 1 (numerator (over 1 4)),   
       test "numerator -n" <|
          \() ->
-           Expect.equal (numerator (over -1 4)) -1,   
+           Expect.equal -1 (numerator (over -1 4)),   
       test "numerator -d" <|
          \() ->
-           Expect.equal (numerator (over 1 -4)) -1, 
+           Expect.equal -1 (numerator (over 1 -4)), 
       test "numerator -n -d" <|
          \() ->
-           Expect.equal (numerator (over -1 -4)) 1,
+           Expect.equal 1 (numerator (over -1 -4)),
       test "denominator -d" <|
          \() ->
-           Expect.equal (denominator (over 1 -4)) 4,   
+           Expect.equal 4 (denominator (over 1 -4)),   
       test "denominator -n" <|
          \() ->
-           Expect.equal (denominator (over -1 4)) 4,
+           Expect.equal 4 (denominator (over -1 4)),
       test "denominator -n -d" <|
          \() ->
-           Expect.equal (denominator (over -1 -4)) 4,
+           Expect.equal 4 (denominator (over -1 -4)),
       test "denominator 0" <|
          \() ->
-           Expect.equal (denominator (over 1 0)) 0,
+           Expect.equal 0 (denominator (over 1 0)),
       test "eq" <|
          \() ->
-           Expect.equal (Ratio.eq (over 1 2) (over 1 2)) True,
+           Expect.equal True (Ratio.eq (over 1 2) (over 1 2)),
       test "eq vulgar" <|
          \() ->
-           Expect.equal (Ratio.eq (over 2 1) (fromInt 2)) True,
+           Expect.equal True (Ratio.eq (over 2 1) (fromInt 2)),
       test "ne" <|
          \() ->
-           Expect.equal (Ratio.ne (over 1 2) (over 1 3)) True,
+           Expect.equal True (Ratio.ne (over 1 2) (over 1 3)),
       test "is zero" <|
          \() ->
-           Expect.equal (isZero (over 0 1)) True,
+           Expect.equal True (isZero (over 0 1)),
       test "is not zero" <|
          \() ->
-           Expect.equal (isZero (over 1 1)) False,   
+           Expect.equal False (isZero (over 1 1)),   
       test "infinity" <|
          \() ->
-           Expect.equal (Basics.isInfinite (Ratio.toFloat(over 1 0))) True,   
+           Expect.equal True (Basics.isInfinite (Ratio.toFloat(over 1 0))),   
       test "infinity under mult by infinity" <|
          \() ->
-           Expect.equal (multiply (over 5 1) (over 1 0)) (over 1 0),    
+           Expect.equal (over 1 0) (multiply (over 5 1) (over 1 0)),     
+      test "subtraction of infinity" <|
+         \() ->
+           let 
+              minusInfinity = 100 -| Ratio.negate (over 1 0)
+           in
+             Expect.equal True (Basics.isInfinite (Ratio.toFloat(minusInfinity))),   
       test "production of infinity" <|
          \() ->
            let
              bigInt = 2 ^ 31
            in
-             Expect.equal (multiply (over bigInt 1) (over bigInt 0)) (over 1 0),     
+             Expect.equal (over 1 0) (multiply (over bigInt 1) (over bigInt 0)),     
       test "infinity" <|
          \() ->
-           Expect.equal (Basics.isInfinite (Ratio.toFloat(over 1 0))) True 
+           Expect.equal True (Basics.isInfinite (Ratio.toFloat(over 1 0))),
+      -- test the expectAlmostEqual function
+      test "expectAlmostEqual function 0" <|
+         \() ->
+           expectAlmostEqual 0.0 0.0,
+      test "expectAlmostEqual function 10" <|
+         \() ->
+           expectAlmostEqual 10 10.00000001,
+      test "expectAlmostEqual function 10^6" <|
+         \() ->
+           expectAlmostEqual 1000000 1000000.0001,
+      test "expectAlmostEqual function 10^-6" <|
+         \() ->
+           expectAlmostEqual 0.000001 0.0000009999,
+      -- basic subtraction
+      test "8/7 -1 -1" <|
+         \() ->
+           Expect.equal (over -6 7) ( (over 8 7) |- 1 |- 1),
+      test "7/3 -1/6 -1/6" <|
+         \() ->
+           Expect.equal (over 2 1) ( (over 7 3) |-| (over 1 6) |-| (over 1 6)),
+      test "7/3 +1/6 -1/6" <|
+         \() ->
+           Expect.equal (over 7 3) ( (over 7 3) |+| (over 1 6) |-| (over 1 6)),
+      test "7/3 -1/9 +4/9" <|
+         \() ->
+           Expect.equal (over 8 3) ( (over 7 3) |-| (over 1 9) |+| (over 4 9)),
+      -- basic division
+      test "8/7 / 1/2" <|
+         \() ->
+           Expect.equal (over 16 7) ( (over 8 7) |/| (over 1 2)),
+      test "0 / 1/3" <|
+         \() ->
+           Expect.equal (over 0 1) ( 0 /| (over 1 3)),
+      test "8/7 / 2 / 3" <|
+         \() ->
+           Expect.equal (over 4 21) ( (over 8 7) |/ 2 |/ 3 )
+ 
  
         ]
 
@@ -98,10 +178,28 @@ infixComparisons =
     [     
       test "is |==|" <|
          \() ->
-           Expect.equal ((over 1 2) |==| (over 1 2)) True,
+           Expect.equal True ((over 1 2) |==| (over 1 2)),
+      test "is |==" <|
+         \() ->
+           Expect.equal True ((over 3 1) |== 3),
       test "not |==|" <|
          \() ->
-           Expect.equal ((over 1 2) |==| (over 1 3)) False
+           Expect.equal False ((over 1 2) |==| (over 1 3)), 
+      test "is |/=|" <|
+         \() ->
+           Expect.equal True ((over 1 3) |/=| (over 1 2)),
+      test "is |/=" <|
+         \() ->
+           Expect.equal False ((over 3 1) |/= 3),
+      test "not |/=|" <|
+         \() ->
+           Expect.equal True ((over 1 2) |/=| (over 1 3)), 
+      test "== in |>=|" <|
+         \() ->
+           Expect.equal True ((over 1 2) |>=| (over 1 2)),
+      test "== in |<=|" <|
+         \() ->
+           Expect.equal True ((over 1 2) |>=| (over 1 2))
     ]
     
 
@@ -135,7 +233,6 @@ comparisons =
            Ratio.min a b
              |> Ratio.toFloat
              |> Expect.equal (Basics.min (Ratio.toFloat a)  (Ratio.toFloat b))
-
         ]
 
 
@@ -148,25 +245,103 @@ comparisons =
 arithmetic : Test
 arithmetic =
   describe "Arithmetic Checks"
-    [        
+    [   
+    -- addition
+    fuzz (fuzzRationalIntPair) "|+" <|
+        \(r,i) ->
+           r |+ i
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) + (Basics.toFloat i)), 
+     fuzz (fuzzRationalIntPair) "+|" <|
+        \(r,i) ->
+          i +| r 
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) + (Basics.toFloat i)),
+     fuzz (fuzzRationalPair) "|+|" <|
+        \(a,b) ->
+          a |+| b 
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat a) + (Ratio.toFloat b)),
+     fuzz (fuzzRationalIntTrio) "transitivity of +" <|
+        \(r,i,j) ->
+           r |+ i |+ j
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) + (Basics.toFloat i) + (Basics.toFloat j)),
+
+    -- subtraction
+    fuzz (fuzzRationalIntPair) "|-" <|
+        \(r,i) ->
+           r |- i
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) - (Basics.toFloat i)), 
+     fuzz (fuzzRationalIntPair) "-" <|
+        \(r,i) ->
+          i -| r 
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) - (Basics.toFloat i)),
+     fuzz (fuzzRationalPair) "|-|" <|
+        \(a,b) ->
+          a |-| b 
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat a) - (Ratio.toFloat b)),
+     fuzz (fuzzRationalIntTrio) "transitivity of -" <|
+        \(r,i,j) ->
+           r |- i |- j
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) - (Basics.toFloat i) - (Basics.toFloat j)),
+     fuzz (fuzzRationalIntPair) "transitivity of - and +" <|
+        \(r,i) ->
+           r |- i |+ i
+             |> Ratio.toFloat
+             |> expectAlmostEqual (Ratio.toFloat r),   
+     fuzz (fuzzRationalIntPair) "transitivity of + abd -" <|
+        \(r,i) ->
+           i +| r |-| r
+             |> Ratio.toFloat
+             |> expectAlmostEqual (Basics.toFloat i),   
+    
+     
+     -- multiplication
      fuzz (fuzzRationalIntPair) "|*" <|
         \(r,i) ->
            r |* i
              |> Ratio.toFloat
-             |> Expect.equal ((Ratio.toFloat r) * (Basics.toFloat i)), 
+             |> expectAlmostEqual ((Ratio.toFloat r) * (Basics.toFloat i)), 
      fuzz (fuzzRationalIntPair) "*|" <|
         \(r,i) ->
           i *| r 
              |> Ratio.toFloat
-             |> Expect.equal ((Ratio.toFloat r) * (Basics.toFloat i)),
+             |> expectAlmostEqual ((Ratio.toFloat r) * (Basics.toFloat i)),
      fuzz (fuzzRationalPair) "|*|" <|
         \(a,b) ->
           a |*| b 
              |> Ratio.toFloat
-             |> Expect.equal ((Ratio.toFloat a) * (Ratio.toFloat b)),
-     fuzz (fuzzRationalIntPair) "transitivity of *" <|
-        \(r,i) ->
-           r |* i |* i
+             |> expectAlmostEqual ((Ratio.toFloat a) * (Ratio.toFloat b)),
+     fuzz (fuzzRationalIntTrio) "transitivity of *" <|
+        \(r,i,j) ->
+           r |* i |* j
              |> Ratio.toFloat
-             |> Expect.equal ((Ratio.toFloat r) * (Basics.toFloat i) * (Basics.toFloat i))
+             |> expectAlmostEqual ((Ratio.toFloat r) * (Basics.toFloat i) * (Basics.toFloat j)),
+
+    -- division
+     fuzz (fuzzRationalIntPair) "|/" <|
+        \(r,i) ->
+           r |/ i
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) / (Basics.toFloat i)),
+     fuzz (fuzzRationalIntPair) "/|" <|
+        \(r,i) ->
+          i /| r 
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Basics.toFloat i)  / (Ratio.toFloat r) ),
+     fuzz (fuzzRationalPair) "|/|" <|
+        \(a,b) ->
+          a |/| b 
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat a) / (Ratio.toFloat b)),
+     fuzz (fuzzRationalIntTrio) "transitivity of /" <|
+        \(r,i,j) ->
+           r |/ i |/ j
+             |> Ratio.toFloat
+             |> expectAlmostEqual ((Ratio.toFloat r) / (Basics.toFloat i) / (Basics.toFloat j))
     ]
