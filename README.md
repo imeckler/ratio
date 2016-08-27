@@ -16,11 +16,13 @@ This is forked from imeckler/Ratio in order to achieve the following:
 
 4.  Infix operators for mixed type arithmetic incorporating both Rationals and Ints.  Where both operands are Rationals, we surround the operator with the _'|'_ symbol.  Where one operand is a Rational and the other an Int, we place the _'|'_ symbol at the side of the operator adjacent to the Rational.  For example (where r is a Rational and i an Int):
 
+```elm
     r1 |+| r2
     
     i +| r
     
     r |+ i
+```
 
 
 Behaviour of Infinity is interesting:
