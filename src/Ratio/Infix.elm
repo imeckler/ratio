@@ -31,70 +31,69 @@ infixl 7 |/|
    confusion with the same infix functions in Basics
 -}
 
-{-| Rational == Rational -}
+{-| Synonym for Ratio.eq -}
 (|==|) : Rational -> Rational -> Bool
 (|==|) a b = 
   eq a b
 
-{-| Rational == Int -}
+{-| Synonym for Ratio.eq where the second operand is an Int -}
 (|==) : Rational -> Int -> Bool
 (|==) a b = 
   eq a (fromInt b)
 
-{-| Rational /= Rational -}
+{-| Synonym for Ratio.ne  -}
 (|/=|) : Rational -> Rational -> Bool
 (|/=|) a b = 
   ne a b
 
-{-| Rational /= Int -}
+{-| Synonym for Ratio.ne where the second operand is an Int  -}
 (|/=) : Rational -> Int -> Bool
 (|/=) a b = 
   ne a (fromInt b)
 
-{-|Rational  > Rational -}
+{-| Synonym for Ratio.gt -}
 (|>|) : Rational -> Rational -> Bool
 (|>|) a b = 
   gt a b
 
-
-{-| Rational >= Rational -}
+{-| Synonym for Ratio.ge -}
 (|>=|) : Rational -> Rational -> Bool
 (|>=|) a b = 
   ge a b
 
-{-| Rational < Rational -}
+{-| Synonym for Ratio.lt  -}
 (|<|) : Rational -> Rational -> Bool
 (|<|) a b = 
   lt a b
 
-{-| Rational <= Rational -}
+{-| Synonym for Ratio.le -}
 (|<=|) : Rational -> Rational -> Bool
 (|<=|) a b = 
   le a b
 
 -- arithmetic ops
 
-{-| add an int to a rational -}
+{-| Synonym for Ratio.add where the first operand is an Int -}
 (+|) : Int -> Rational -> Rational
 (+|) i r = 
   add (fromInt i) r
 
-{-| add a rational to an int -}
+{-| Synonym for Ratio.add where the second operand is an Int -}
 (|+) : Rational -> Int -> Rational
 (|+) =
   flip (+|)
 
-{-| add 2 rationals-}
+{-| Synonym for Ratio.add -}
 (|+|) : Rational -> Rational -> Rational
 (|+|) =
   add
 
-{-| subtract an int from a rational -}
+{-| Synonym for Ratio.subtract where the first operand is an Int  -}
 (-|) : Int -> Rational -> Rational
 (-|) i r = 
   subtract (fromInt i)  r
 
-{-| subtract a rational from an int -}
+{-| Synonym for Ratio.subtract where the second operand is an Int -}
 (|-) : Rational -> Int -> Rational
 (|-) r i =
   subtract r (fromInt i) 
@@ -107,37 +106,37 @@ infixl 7 |/|
   flip (-|) 
 -}
 
-{-| subtract 2 rationals-}
+{-| Synonym for Ratio.subtract -}
 (|-|) : Rational -> Rational -> Rational
 (|-|) =
   subtract
 
-{-| multiply a rational by an int -}
+{-| Synonym for Ratio.multiply where the second operand is an Int -}
 (|*) : Rational -> Int -> Rational
 (|*) =
   multiplyByInt
 
-{-| multiply an int by a rational -}
+{-| Synonym for Ratio.multiply where the first operand is an Int -}
 (*|) : Int -> Rational -> Rational
 (*|) = 
   flip multiplyByInt
 
-{-| multiply 2 rationals-}
+{-| Synonym for Ratio.multiply -}
 (|*|) : Rational -> Rational -> Rational
 (|*|) =
   multiply
 
-{-| divide a rational by an int -}
+{-| Synonym for Ratio.divide where the second operand is an Int -}
 (|/) : Rational -> Int -> Rational
 (|/) =
   divideByInt
 
-{-| divide an int by a rational -}
+{-| Synonym for Ratio.divide where the first operand is an Int -}
 (/|) : Int -> Rational -> Rational
 (/|) = 
   divideIntBy
 
-{-| divide a rational by another-}
+{-| Synonym for Ratio.divide -}
 (|/|) : Rational -> Rational -> Rational
 (|/|) =
   divide
