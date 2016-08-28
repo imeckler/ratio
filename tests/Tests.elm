@@ -259,7 +259,20 @@ comparisons =
         \(a,b) ->
            Ratio.min a b
              |> Ratio.toFloat
-             |> Expect.equal (Basics.min (Ratio.toFloat a)  (Ratio.toFloat b))
+             |> Expect.equal (Basics.min (Ratio.toFloat a)  (Ratio.toFloat b)),
+      fuzz (fuzzRationalPair) "compare" <|
+        \(a,b) ->
+           let 
+              f x y =
+                if (x |>| y) then 
+                  GT
+                else if (x |==| y) then
+                  EQ
+                else
+                  LT
+           in
+             Ratio.compare a b
+               |> Expect.equal (f a b)
         ]
 
 

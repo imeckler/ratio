@@ -23,6 +23,7 @@ module Ratio
         , lt
         , ge
         , le
+        , compare
         , max
         , min
         , isZero
@@ -43,7 +44,7 @@ module Ratio
 
 # Operations
 @docs add, subtract, multiply, multiplyByInt, divide, divideByInt, divideIntBy, negate, invert, 
-      eq, ne, gt, lt, ge, le, max, min, isZero, isInfinite, round, floor, ceiling, truncate
+      eq, ne, gt, lt, ge, le, max, min, compare, isZero, isInfinite, round, floor, ceiling, truncate
 
 
 
@@ -210,6 +211,11 @@ ge a b =
 le : Rational -> Rational -> Bool
 le a b =
   rel (<=) a b
+
+{-|-}
+compare: Rational -> Rational -> Order
+compare a b =
+  Basics.compare (toFloat a) (toFloat b)
 
 {-|-}
 max : Rational -> Rational -> Rational
