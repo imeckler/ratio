@@ -3,8 +3,6 @@ module Tests exposing (..)
 import Test exposing (..)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, intRange, tuple, map)
-import Expect
-import String
 import Ratio exposing (..)
 import Ratio.Infix exposing (..)
 
@@ -167,8 +165,37 @@ basics =
            Expect.equal (over 0 1) ( 0 /| (over 1 3)),
       test "8/7 / 2 / 3" <|
          \() ->
-           Expect.equal (over 4 21) ( (over 8 7) |/ 2 |/ 3 )
- 
+           Expect.equal (over 4 21) ( (over 8 7) |/ 2 |/ 3 ),
+      test "round down pos" <|
+         \() ->
+           Expect.equal 3 (Ratio.round (over 10 3)),
+      test "round down neg" <|
+         \() ->
+           Expect.equal -3 (Ratio.round (over -10 3)),
+      test "round up pos" <|
+         \() ->
+           Expect.equal 5 (Ratio.round (over 19 4)),
+      test "round up neg" <|
+         \() ->
+           Expect.equal -5 (Ratio.round (over -19 4)),
+      test "floor pos" <|
+         \() ->
+           Expect.equal 4 (Ratio.floor (over 19 4)),
+      test "floor neg" <|
+         \() ->
+           Expect.equal -5 (Ratio.floor (over -19 4)),
+      test "ceiling pos" <|
+         \() ->
+           Expect.equal 5 (Ratio.ceiling (over 19 4)),
+      test "ceiling neg" <|
+         \() ->
+           Expect.equal -4 (Ratio.ceiling (over -19 4)),
+      test "truncate pos" <|
+         \() ->
+           Expect.equal 4 (Ratio.truncate (over 19 4)),
+      test "truncate neg" <|
+         \() ->
+           Expect.equal -4 (Ratio.truncate (over -19 4)) 
  
         ]
 
@@ -222,7 +249,7 @@ comparisons =
       fuzz (fuzzRationalPair) "<=" <|
         \(a,b) ->
            le a b
-             |> Expect.equal ((Ratio.toFloat a) < (Ratio.toFloat b)),
+             |> Expect.equal ((Ratio.toFloat a) <= (Ratio.toFloat b)),
       fuzz (fuzzRationalPair) "max" <|
         \(a,b) ->
            Ratio.max a b

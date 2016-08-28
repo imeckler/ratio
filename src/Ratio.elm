@@ -27,6 +27,10 @@ module Ratio
         , min
         , isZero
         , isInfinite
+        , round
+        , floor
+        , ceiling
+        , truncate
         )
 
 {-| A simple module providing a ratio type for rational numbers 
@@ -38,7 +42,8 @@ module Ratio
 @docs over, fromInt
 
 # Operations
-@docs add, subtract, multiply, multiplyByInt, divide, divideByInt, divideIntBy, negate, invert, eq, ne, gt, lt, ge, le, max, min, isZero, isInfinite
+@docs add, subtract, multiply, multiplyByInt, divide, divideByInt, divideIntBy, negate, invert, 
+      eq, ne, gt, lt, ge, le, max, min, isZero, isInfinite, round, floor, ceiling, truncate
 
 
 
@@ -232,6 +237,21 @@ isInfinite : Rational -> Bool
 isInfinite r =
   0 == (denominator r)
 
+{-|-}
+round : Rational -> Int
+round = toFloat >> Basics.round
+
+{-|-}
+floor : Rational -> Int
+floor = toFloat >> Basics.floor
+
+{-|-}
+ceiling : Rational -> Int
+ceiling = toFloat >> Basics.ceiling
+
+{-|-}
+truncate : Rational -> Int
+truncate = toFloat >> Basics.truncate
   
 rel : (Int -> Int -> Bool) -> Rational -> Rational -> Bool
 rel relop a b =
