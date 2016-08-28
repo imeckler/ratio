@@ -10,7 +10,7 @@ This is forked from imeckler/Ratio in order to achieve the following:
     
     Rational (-1) (-3) becomes Rational 1 3
     
-2.  Further combinators for comparing two Rationals - __eq, ne, gt, ge, lt, le, max, min__ etc.
+2.  Further combinators for comparing two Rationals - __eq, ne, gt, ge, lt, le, compare, max, min__ etc.
 
 3.  Further arithmetic combinators - __floor, ceiling, truncate, round, invert__ etc.
 

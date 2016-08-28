@@ -2,6 +2,7 @@ module Tests exposing (..)
 
 import Test exposing (..)
 import Expect exposing (Expectation)
+import Proto.Expect exposing (nearlyEqual)
 import Fuzz exposing (Fuzzer, intRange, tuple, map)
 import Ratio exposing (..)
 import Ratio.Infix exposing (..)
@@ -24,11 +25,12 @@ fuzzRationalIntTrio : Fuzzer (Rational, Int, Int)
 fuzzRationalIntTrio =
   Fuzz.tuple3 (fuzzRational, intRange -100 100, intRange -100 100)
 
-{-| naive and rather arbitrary implementation of the requested Float expectation function almostEqual 
 
-    (see https://github.com/elm-community/elm-test/issues/41)
--}
 expectAlmostEqual : Float -> Float -> Expectation
+expectAlmostEqual =
+  Proto.Expect.nearlyEqual
+
+{- rejected in favour of the version from @mgold
 expectAlmostEqual signedTarget signedTestable =
   let
     target = abs signedTarget
@@ -54,6 +56,7 @@ expectAlmostEqual signedTarget signedTestable =
              firstTest
            Nothing ->
              Expect.lessThan upperBound testable
+-}
              
 
 all : Test
@@ -314,11 +317,11 @@ arithmetic =
            r |- i
              |> Ratio.toFloat
              |> expectAlmostEqual ((Ratio.toFloat r) - (Basics.toFloat i)), 
-     fuzz (fuzzRationalIntPair) "-" <|
+     fuzz (fuzzRationalIntPair) "-|" <|
         \(r,i) ->
           i -| r 
              |> Ratio.toFloat
-             |> expectAlmostEqual ((Ratio.toFloat r) - (Basics.toFloat i)),
+             |> expectAlmostEqual ((Basics.toFloat i) - (Ratio.toFloat r)),
      fuzz (fuzzRationalPair) "|-|" <|
         \(a,b) ->
           a |-| b 
