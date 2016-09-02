@@ -46,6 +46,8 @@ nearlyEqual  =
       in
         if (Basics.isInfinite i && Basics.isInfinite j) then
           Ok ()
+        else if (Basics.isNaN i && Basics.isNaN j) then
+          Ok ()
         else if abs (i - j) < tolerance then
           Ok ()
         else

@@ -2,16 +2,33 @@ module Tests exposing (..)
 
 import Test exposing (..)
 import Expect exposing (Expectation)
-import Proto.Expect exposing (nearlyEqual)
-import Fuzz exposing (Fuzzer, intRange, tuple, map)
+import Proto.Expect as Expect
+import Fuzz exposing (Fuzzer, intRange, tuple, map, custom)
+import Shrink exposing (map, andMap)
+import Random.Pcg as Random
 import Ratio exposing (..)
 import Ratio.Infix exposing (..)
 
+
+
+{- this doesn't shrink the actual Rational - only the ints -}
 fuzzRational : Fuzzer Rational
 fuzzRational = 
   Fuzz.tuple (intRange -100 100, intRange 1 100) 
     -- |> Fuzz.map (uncurry Rational) -- don't think this is a safe constructor after all
     |> Fuzz.map (\(a,b) -> over a b)
+
+
+{- this attempts to shrink the Rational but I'm not sure if it's correct -
+   (can you shrink both numerator and denomonator independently?)
+   in any case it doesn't manage to shrink anything
+fuzzRational : Fuzzer Rational
+fuzzRational =
+  Fuzz.custom
+    (Random.map2 over (Random.int -100 100) (Random.int 1 100))
+    (\r -> Shrink.map over (Shrink.int (numerator r)) `Shrink.andMap` (Shrink.int (denominator r))) 
+-}
+
 
 fuzzRationalPair : Fuzzer (Rational, Rational)
 fuzzRationalPair =
@@ -28,7 +45,7 @@ fuzzRationalIntTrio =
 
 expectAlmostEqual : Float -> Float -> Expectation
 expectAlmostEqual =
-  Proto.Expect.nearlyEqual
+  Expect.nearlyEqual
 
 {- rejected in favour of the version from @mgold
 expectAlmostEqual signedTarget signedTestable =
@@ -326,7 +343,7 @@ arithmetic =
         \(a,b) ->
           a |-| b 
              |> Ratio.toFloat
-             |> expectAlmostEqual ((Ratio.toFloat a) - (Ratio.toFloat b)),
+             |> expectAlmostEqual ((Ratio.toFloat a) - (Ratio.toFloat b)), 
      fuzz (fuzzRationalIntTrio) "transitivity of -" <|
         \(r,i,j) ->
            r |- i |- j
