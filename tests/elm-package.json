@@ -10,7 +10,7 @@
     "exposed-modules": [],
     "dependencies": {
         "elm-lang/core": "4.0.5 <= v < 5.0.0",
-        "elm-community/elm-test": "2.0.1 <= v < 3.0.0", 
+        "elm-community/elm-test": "2.1.0 <= v < 3.0.0", 
         "elm-community/shrink": "1.1.0 <= v < 2.0.0",
         "mgold/elm-random-pcg": "3.0.0 <= v < 4.0.0",
         "rtfeldman/node-test-runner": "1.0.0 <= v < 2.0.0"
