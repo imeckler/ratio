@@ -9,21 +9,17 @@ import Random.Pcg as Random
 import Ratio exposing (..)
 import Ratio.Infix exposing (..)
 
-
-
-{- this doesn't shrink the actual Rational - only the ints -}
+{- let's use the newly-minted map2 from elm-test 2.1.0 -}
 fuzzRational : Fuzzer Rational
 fuzzRational = 
-  Fuzz.tuple (intRange -100 100, intRange 1 100) 
-    -- |> Fuzz.map (uncurry Rational) -- don't think this is a safe constructor after all
-    |> Fuzz.map (\(a,b) -> over a b)
+  Fuzz.map2 over (intRange -100 100) (intRange 1 100) 
 
 
 {- this attempts to shrink the Rational but I'm not sure if it's correct -
    (can you shrink both numerator and denomonator independently?)
    in any case it doesn't manage to shrink anything
-fuzzRational : Fuzzer Rational
-fuzzRational =
+fuzzRational1 : Fuzzer Rational
+fuzzRational1 =
   Fuzz.custom
     (Random.map2 over (Random.int -100 100) (Random.int 1 100))
     (\r -> Shrink.map over (Shrink.int (numerator r)) `Shrink.andMap` (Shrink.int (denominator r))) 
