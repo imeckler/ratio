@@ -1,6 +1,6 @@
 # Ratio
 
-A simple module for working with rational numbers.
+An elm 0.18 module for working with rational numbers.
 
 This is forked from imeckler/Ratio in order to achieve the following:
 
