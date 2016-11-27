@@ -1,12 +1,36 @@
-module Ratio.Infix exposing (..)
+module Ratio.Infix
+    exposing
+        ( (|==|)
+        , (|==)
+        , (|/=|)
+        , (|/=)
+        , (|>|)
+        , (|>=|)
+        , (|<|)
+        , (|<=|)
+        , (+|)
+        , (|+)
+        , (|+|)
+        , (-|)
+        , (|-)
+        , (|-|)
+        , (*|)
+        , (|*)
+        , (|*|)
+        , (/|)
+        , (|/)
+        , (|/|)
+        )
 
-{-| Experimental infix operators for Rationals
+{-| Infix operators for Rationals.
 
 # Infix comparisons
 @docs (|==|), (|==), (|/=|), (|/=), (|>|), (|>=|), (|<|), (|<=|)
 
 # Infix arithmetic
-@docs (|*), (*|), (|*|), (|-|)
+@docs  (+|), (|+), (|+|), (-|), (|-), (|-|),
+       (*|), (|*), (|*|), (/|), (|/), (|/|)
+
 -}
 
 import Ratio exposing (..)
@@ -65,7 +89,7 @@ infixl 7 |/|
     eq a b
 
 
-{-| Synonym for Ratio.eq where the second operand is an Int
+{-| Test a Rational and an Int for equality
 -}
 (|==) : Rational -> Int -> Bool
 (|==) a b =
@@ -79,7 +103,7 @@ infixl 7 |/|
     ne a b
 
 
-{-| Synonym for Ratio.ne where the second operand is an Int
+{-| Test a Rational and an Int for inequality
 -}
 (|/=) : Rational -> Int -> Bool
 (|/=) a b =
@@ -118,14 +142,14 @@ infixl 7 |/|
 -- arithmetic ops
 
 
-{-| Synonym for Ratio.add where the first operand is an Int
+{-| Add an Int to a Rational
 -}
 (+|) : Int -> Rational -> Rational
 (+|) i r =
     add (fromInt i) r
 
 
-{-| Synonym for Ratio.add where the second operand is an Int
+{-| add a Rational to an Int
 -}
 (|+) : Rational -> Int -> Rational
 (|+) =
@@ -139,14 +163,14 @@ infixl 7 |/|
     add
 
 
-{-| Synonym for Ratio.subtract where the first operand is an Int
+{-| Subtract a Rational from an Iny
 -}
 (-|) : Int -> Rational -> Rational
 (-|) i r =
     subtract (fromInt i) r
 
 
-{-| Synonym for Ratio.subtract where the second operand is an Int
+{-| Subtract an Int from a Rational
 -}
 (|-) : Rational -> Int -> Rational
 (|-) r i =
@@ -170,14 +194,14 @@ infixl 7 |/|
     subtract
 
 
-{-| Synonym for Ratio.multiply where the second operand is an Int
+{-| Multiply an Rational by an Int
 -}
 (|*) : Rational -> Int -> Rational
 (|*) =
     multiplyByInt
 
 
-{-| Synonym for Ratio.multiply where the first operand is an Int
+{-| Multiply an Int by a Rational
 -}
 (*|) : Int -> Rational -> Rational
 (*|) =
@@ -191,14 +215,14 @@ infixl 7 |/|
     multiply
 
 
-{-| Synonym for Ratio.divide where the second operand is an Int
+{-| Divide a Rational by an Int
 -}
 (|/) : Rational -> Int -> Rational
 (|/) =
     divideByInt
 
 
-{-| Synonym for Ratio.divide where the first operand is an Int
+{-| Divide an Int by a Rational
 -}
 (/|) : Int -> Rational -> Rational
 (/|) =

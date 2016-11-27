@@ -39,20 +39,22 @@ module Ratio
 # Types
 @docs Rational
 
-# Introduction
+# Construction
 @docs over, fromInt
 
-# Operations
-@docs add, subtract, multiply, multiplyByInt, divide, divideByInt, divideIntBy, negate, invert,
-      eq, ne, gt, lt, ge, le, max, min, compare, isZero, isInfinite, round, floor, ceiling, truncate
+# Comparison
+@docs eq, ne, gt, lt, ge, le, max, min, compare
 
-
+# Mathematics
+@docs add, subtract, multiply, multiplyByInt
+@docs divide, divideByInt, divideIntBy, negate
+@docs isZero, isInfinite, round, floor, ceiling, truncate
 
 # Elimination
-@docs numerator, denominator, split, toFloat
+@docs numerator, denominator, split
 
-# Util
-@docs gcd
+# Utils
+@docs gcd, invert, toFloat
 
 -}
 
